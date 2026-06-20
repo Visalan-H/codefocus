@@ -1,0 +1,388 @@
+:root {
+  /* VS Code dark palette — unified with the editor */
+  --cfr-bg:     #1e1e1e;   /* main surface, matches vs-dark */
+  --cfr-bar:    #252526;   /* toolbar + results panel */
+  --cfr-line:   #3c3c3c;   /* borders */
+  --cfr-paper:  #ffffff;   /* left pane */
+
+  --cfr-text:   #cccccc;   /* primary text */
+  --cfr-dim:    #858585;   /* muted / labels */
+  --cfr-ink:    #1e1e1e;   /* text on light bg */
+
+  --cfr-accent: #0078d4;   /* VS Code blue */
+
+  --cfr-mono: ui-monospace, "JetBrains Mono", "SF Mono", "Cascadia Code", Consolas, monospace;
+  --cfr-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+#cfr-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  background: var(--cfr-bg);
+  font-family: var(--cfr-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- left pane ---------- */
+
+#cfr-left {
+  width: 50%;
+  min-width: 320px;
+  overflow-y: auto;
+  background: var(--cfr-paper);
+  color: var(--cfr-ink);
+  padding: 32px 40px;
+  line-height: 1.65;
+  border-right: 1px solid var(--cfr-line);
+}
+
+#cfr-left::-webkit-scrollbar { width: 8px; }
+#cfr-left::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 4px;
+}
+
+/* ---------- splitter ---------- */
+
+#cfr-splitter {
+  width: 5px;
+  flex-shrink: 0;
+  background: var(--cfr-line);
+  cursor: col-resize;
+  transition: background 0.15s ease;
+}
+
+#cfr-splitter span { display: none; }
+
+#cfr-splitter:hover,
+#cfr-splitter.cfr-dragging {
+  background: var(--cfr-accent);
+}
+
+/* ---------- right pane ---------- */
+
+#cfr-right {
+  flex: 1;
+  min-width: 360px;
+  display: flex;
+  flex-direction: column;
+  background: var(--cfr-bg);
+  overflow: hidden;
+}
+
+/* ---------- toolbar ---------- */
+
+#cfr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--cfr-bar);
+  border-bottom: 1px solid var(--cfr-line);
+  flex-shrink: 0;
+}
+
+#cfr-brand {
+  font-family: var(--cfr-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--cfr-dim);
+  text-transform: uppercase;
+  user-select: none;
+  white-space: nowrap;
+}
+
+#cfr-toolbar-spacer { flex: 1; }
+
+/* language select — custom arrow, no OS chrome */
+
+#cfr-lang {
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: var(--cfr-mono);
+  font-size: 12px;
+  color: var(--cfr-text);
+  background-color: var(--cfr-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23858585' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  border: 1px solid var(--cfr-line);
+  border-radius: 3px;
+  padding: 5px 26px 5px 9px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+#cfr-lang:hover  { border-color: #555; }
+#cfr-lang:focus  { border-color: var(--cfr-accent); outline: none; }
+
+/* buttons */
+
+#cfr-run,
+#cfr-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--cfr-sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.1s ease, border-color 0.1s ease, filter 0.1s ease, transform 0.05s ease, opacity 0.1s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+#cfr-run:active:not(:disabled),
+#cfr-submit:active:not(:disabled) { transform: translateY(1px); }
+
+.cfr-icon { flex-shrink: 0; }
+
+#cfr-run {
+  background: var(--cfr-accent);
+  color: #fff;
+  border-color: var(--cfr-accent);
+}
+
+#cfr-run:hover:not(:disabled) {
+  background: #1184d9;
+  border-color: #1184d9;
+}
+
+#cfr-submit {
+  background: transparent;
+  color: var(--cfr-text);
+  border-color: var(--cfr-line);
+}
+
+#cfr-submit:hover:not(:disabled) {
+  border-color: #555;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+#cfr-run:disabled,
+#cfr-submit:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+#cfr-run.cfr-busy .cfr-icon,
+#cfr-submit.cfr-busy .cfr-icon { display: none; }
+
+#cfr-run.cfr-busy::before,
+#cfr-submit.cfr-busy::before {
+  content: '';
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: cfr-spin 0.6s linear infinite;
+}
+
+#cfr-run:focus-visible,
+#cfr-submit:focus-visible,
+#cfr-lang:focus-visible {
+  outline: 2px solid var(--cfr-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- editor ---------- */
+
+#cfr-editor-container {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--cfr-bg);
+}
+
+#cfr-editor-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--cfr-mono);
+  color: var(--cfr-dim);
+  font-size: 13px;
+}
+
+#cfr-editor-loading::after {
+  content: '';
+  display: inline-block;
+  width: 1.2em;
+  text-align: left;
+  animation: cfr-ellipsis 1.2s steps(4) infinite;
+}
+
+/* ---------- results ---------- */
+
+#cfr-results {
+  border-top: 1px solid var(--cfr-line);
+  padding: 9px 14px 12px;
+  background: var(--cfr-bar);
+  flex-shrink: 0;
+}
+
+.cfr-empty {
+  font-size: 13px;
+  color: var(--cfr-dim);
+}
+
+#cfr-verdicts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cfr-v-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--cfr-mono);
+}
+
+.cfr-v-num {
+  font-size: 11px;
+  color: var(--cfr-dim);
+}
+
+.cfr-badge {
+  font-family: var(--cfr-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.cfr-badge-idle    { color: var(--cfr-dim);  border-color: var(--cfr-line); }
+.cfr-badge-pending { color: var(--cfr-dim);  border-color: var(--cfr-line); }
+.cfr-badge-pass    { background: #0078d4;    color: #fff; }
+.cfr-badge-fail    { border-color: #f44747;  color: #f44747; }
+
+/* diff section */
+
+#cfr-diffs {
+  margin-top: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+#cfr-diffs::-webkit-scrollbar { width: 6px; }
+#cfr-diffs::-webkit-scrollbar-thumb {
+  background: var(--cfr-line);
+  border-radius: 3px;
+}
+
+.cfr-diff-section {
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid var(--cfr-line);
+}
+
+.cfr-diff-section:first-child {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: none;
+}
+
+.cfr-diff-head {
+  font-family: var(--cfr-mono);
+  font-size: 10.5px;
+  color: var(--cfr-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 8px;
+}
+
+.cfr-diff {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.cfr-diff-label {
+  font-family: var(--cfr-mono);
+  font-size: 10px;
+  color: var(--cfr-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.cfr-diff pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  font-family: var(--cfr-mono);
+  color: var(--cfr-text);
+  background: var(--cfr-bg);
+  padding: 8px;
+  border-radius: 3px;
+  border: 1px solid var(--cfr-line);
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+/* ---------- toasts ---------- */
+
+#cfr-toast-host {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.cfr-toast {
+  font-family: var(--cfr-sans);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--cfr-text);
+  background: #2d2d2d;
+  border: 1px solid var(--cfr-line);
+  padding: 9px 14px;
+  border-radius: 3px;
+  max-width: 300px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.cfr-toast-in { opacity: 1; transform: translateY(0); }
+.cfr-toast-error { border-left: 3px solid #f44747; }
+
+/* ---------- motion ---------- */
+
+@keyframes cfr-spin { to { transform: rotate(360deg); } }
+
+@keyframes cfr-ellipsis {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cfr-run.cfr-busy::before,
+  #cfr-submit.cfr-busy::before,
+  #cfr-editor-loading::after {
+    animation: none !important;
+  }
+}

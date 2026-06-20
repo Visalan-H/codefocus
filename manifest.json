@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Code Focus",
+  "version": "0.1.0",
+  "description": "Turns Codeforces problem pages into a split view: run public samples instantly, submit without leaving the page.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "https://codeforces.com/*",
+    "https://api.onlinecompiler.io/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Code Focus"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://codeforces.com/problemset/problem/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["vs/*", "monaco-bootstrap.js", "src/*.js"],
+      "matches": ["https://codeforces.com/*"]
+    }
+  ]
+}
