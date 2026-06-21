@@ -31,7 +31,6 @@ html, body {
   color: var(--text);
 }
 
-/* ── slide stage ────────────────────────────────────────────── */
 /* Two panels sit side by side in a 520px-wide track.
    Sliding the track left/right reveals one panel at a time.   */
 
@@ -93,8 +92,6 @@ html, body {
   color: var(--text);
 }
 
-.wordmark .sep { color: var(--dim); }
-
 /* pip — used in ON panel only */
 .pip {
   width: 8px;
@@ -110,7 +107,7 @@ html, body {
   50%      { box-shadow: 0 0 0 5px transparent; }
 }
 
-/* ── OFF panel ──────────────────────────────────────────────── */
+
 
 #panel-off .topbar-right {
   width: 8px; height: 8px;
@@ -178,8 +175,6 @@ html, body {
   margin-top: 5px;
   line-height: 1.5;
 }
-
-/* ── ON panel ───────────────────────────────────────────────── */
 
 .on-status {
   display: flex;
@@ -269,7 +264,7 @@ kbd {
   <!-- OFF -->
   <div class="panel" id="panel-off">
     <div class="topbar">
-      <div class="wordmark">Code <span class="sep">//</span> Focus</div>
+      <div class="wordmark">Code Focus</div>
       <div class="topbar-right"></div>
     </div>
     <div class="off-hero">
@@ -289,7 +284,7 @@ kbd {
   <!-- ON -->
   <div class="panel" id="panel-on">
     <div class="topbar">
-      <div class="wordmark">Code <span class="sep">//</span> Focus</div>
+      <div class="wordmark">Code Focus</div>
       <div class="pip"></div>
     </div>
     <div class="on-status">
@@ -303,4 +298,5 @@ kbd {
 
 <script src="popup.js"></script>
 </body>
+</html>
 </html>

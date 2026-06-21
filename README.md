@@ -60,8 +60,8 @@ To add more, extend the `LANGUAGES` object in `src/config.js`. Compiler IDs come
 
 ## Known limitations
 
-- **Problemset only** — works on `/problemset/problem/...` URLs. Contest pages (`/contest/...`) aren't matched.
-- **Public samples only** — Run tests against the samples shown on the page. There's no custom stdin input.
+- **Problemset, contest, and gym** — matches `/problemset/problem/...`, `/contest/.../problem/...`, and `/gym/.../problem/...` URLs.
+- **Custom test cases** — add your own via the + button in the Testcase tab. Custom cases don't require an expected output.
 - **String diff** — pass/fail is decided by comparing trimmed lines. Special-judge or interactive problems will misfire.
 - **Submit needs a logged-in session** — the Submit button drives CF's own form, so you need to be logged in to CF for it to actually go through.
 

@@ -18,9 +18,22 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://codeforces.com/problemset/problem/*"],
+      "matches": [
+        "https://codeforces.com/problemset/problem/*",
+        "https://codeforces.com/contest/*/problem/*",
+        "https://codeforces.com/gym/*/problem/*"
+      ],
       "js": ["content.js"],
       "css": ["styles.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://codeforces.com/problemset/submit",
+        "https://codeforces.com/contest/*/submit",
+        "https://codeforces.com/gym/*/submit"
+      ],
+      "js": ["src/submit-page.js"],
       "run_at": "document_idle"
     }
   ],

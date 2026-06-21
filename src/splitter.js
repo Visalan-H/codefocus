@@ -5,28 +5,54 @@ export function wireSplitter() {
   const right    = document.getElementById('cfr-right');
   let dragging   = false;
 
-  function onDragStart() {
+  splitter.addEventListener('mousedown', () => {
     dragging = true;
     document.body.style.cursor = 'col-resize';
     splitter.classList.add('cfr-dragging');
-  }
+  });
 
-  function onDrag(event) {
+  window.addEventListener('mousemove', e => {
     if (!dragging) return;
-    const bounds  = wrapper.getBoundingClientRect();
-    const pct     = ((event.clientX - bounds.left) / bounds.width) * 100;
-    const clamped = Math.min(80, Math.max(20, pct));
-    left.style.width  = clamped + '%';
-    right.style.width = (100 - clamped) + '%';
-  }
+    const { left: wLeft, width } = wrapper.getBoundingClientRect();
+    const pct = Math.min(80, Math.max(20, ((e.clientX - wLeft) / width) * 100));
+    left.style.width  = pct + '%';
+    right.style.width = (100 - pct) + '%';
+  });
 
-  function onDragEnd() {
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
     dragging = false;
     document.body.style.cursor = '';
     splitter.classList.remove('cfr-dragging');
-  }
+  });
+}
 
-  splitter.addEventListener('mousedown', onDragStart);
-  window.addEventListener('mousemove',   onDrag);
-  window.addEventListener('mouseup',     onDragEnd);
+export function wireConsoleResizer() {
+  const right   = document.getElementById('cfr-right');
+  const resizer = document.getElementById('cfr-console-resizer');
+  const panel   = document.getElementById('cfr-console');
+  let dragging    = false;
+  let startY      = 0;
+  let startHeight = 0;
+
+  resizer.addEventListener('mousedown', e => {
+    dragging    = true;
+    startY      = e.clientY;
+    startHeight = panel.getBoundingClientRect().height;
+    document.body.style.cursor = 'row-resize';
+    resizer.classList.add('cfr-dragging');
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const maxH = right.getBoundingClientRect().height - 160;
+    panel.style.height = Math.min(maxH, Math.max(120, startHeight + (startY - e.clientY))) + 'px';
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.style.cursor = '';
+    resizer.classList.remove('cfr-dragging');
+  });
 }

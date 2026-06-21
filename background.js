@@ -1,41 +1,33 @@
 import { API_KEY } from './src/api-key.js';
 
-const OC_SYNC = 'https://api.onlinecompiler.io/api/run-code-sync/';
+const OC_ENDPOINT = 'https://api.onlinecompiler.io/api/run-code-sync/';
 
-chrome.runtime.onMessage.addListener(function (msg, _sender, sendResponse) {
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type !== 'cfr:run') return false;
 
-  (async function () {
+  (async () => {
     try {
-      const response = await fetch(OC_SYNC, {
+      const res = await fetch(OC_ENDPOINT, {
         method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': API_KEY,
-        },
-        body: JSON.stringify({
-          compiler: msg.compiler,
-          code:     msg.code,
-          input:    msg.input,
-        }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': API_KEY },
+        body:    JSON.stringify({ compiler: msg.compiler, code: msg.code, input: msg.input }),
       });
 
-      if (response.status === 429) {
-        sendResponse({ ok: false, error: 'onlinecompiler.io is at capacity — wait a moment and retry.' });
+      if (res.status === 429) {
+        sendResponse({ ok: false, error: 'Rate limited — wait a moment and retry.' });
         return;
       }
-      if (!response.ok) {
-        const text = await response.text().catch(function () { return ''; });
-        sendResponse({ ok: false, error: 'onlinecompiler.io ' + response.status + (text ? ' — ' + text.slice(0, 200) : '') });
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        sendResponse({ ok: false, error: `onlinecompiler.io ${res.status}${body ? ' — ' + body.slice(0, 200) : ''}` });
         return;
       }
 
-      const data = await response.json();
-      sendResponse({ ok: true, data });
+      sendResponse({ ok: true, data: await res.json() });
     } catch (err) {
       sendResponse({ ok: false, error: 'Network error — ' + err.message });
     }
   })();
 
-  return true; // required: keeps the message channel open for async sendResponse
+  return true;
 });

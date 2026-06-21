@@ -1,39 +1,46 @@
-import { LANGUAGES }               from './config.js';
-import { isEditorReady, getValue } from './bridge.js';
-import { showToast }               from './utils.js';
+import { LANGUAGES, STORAGE_KEYS }  from './config.js';
+import { isEditorReady, getValue }  from './bridge.js';
+import { storageSet }               from './storage.js';
+import { showToast }                from './utils.js';
+
+function parseSubmitDest() {
+  const m = window.location.pathname.match(
+    /^\/(?:problemset\/problem\/(\d+)|contest\/(\d+)|gym\/(\d+))\/([A-Z0-9]+)/
+  );
+  if (!m) return null;
+
+  const contestId    = m[1] || m[2] || m[3];
+  const problemIndex = m[4];
+  const url          = contestId ? `/contest/${contestId}/submit` : '/problemset/submit';
+
+  return { url, contestId, problemIndex };
+}
 
 export function wireSubmit() {
-  document.getElementById('cfr-submit').addEventListener('click', async () => {
-    if (!isEditorReady) {
-      showToast('Editor is still loading — try again in a moment.');
-      return;
-    }
+  const btn   = document.getElementById('cfr-submit');
+  const label = btn.querySelector('.cfr-btn-label');
 
-    const btn   = document.getElementById('cfr-submit');
-    const label = btn.querySelector('.cfr-btn-label');
+  btn.addEventListener('click', async () => {
+    if (!isEditorReady) { showToast('Editor is still loading — try again in a moment.'); return; }
+
+    const dest = parseSubmitDest();
+    if (!dest) { showToast('Could not determine problem — submit from the problem page.', 'error'); return; }
+
+    btn.disabled = true;
+    btn.classList.add('cfr-busy');
+    label.textContent = 'Opening';
 
     const code = await getValue();
     const lang = LANGUAGES[document.getElementById('cfr-lang').value];
 
-    const form   = document.querySelector('form[name="submitForm"], form#formSubmit, form[action*="submit"]');
-    const source = form?.querySelector('textarea[name="source"]');
-    const type   = form?.querySelector('select[name="programTypeId"]');
+    await storageSet(STORAGE_KEYS.SUBMIT, {
+      code,
+      cfId:         lang.cfId,
+      contestId:    dest.contestId,
+      problemIndex: dest.problemIndex,
+      timestamp:    Date.now(),
+    });
 
-    if (!form) {
-      showToast("Couldn't find Codeforces' submit form — submit manually.", 'error');
-      return;
-    }
-    if (!source || !type) {
-      showToast('Submit form fields look different — submit manually.', 'error');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.classList.add('cfr-busy');
-    label.textContent = 'Submitting';
-
-    source.value = code;
-    type.value   = lang.cfId;
-    form.submit();
+    window.location.href = dest.url;
   });
 }
