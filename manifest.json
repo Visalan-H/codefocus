@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Code Focus",
-  "version": "0.1.0",
+  "name": "CodeFocus",
+  "version": "1.0.0",
   "description": "Turns Codeforces problem pages into a split view: run public samples instantly, submit without leaving the page.",
   "permissions": ["storage", "tabs"],
   "host_permissions": [
@@ -10,7 +10,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Code Focus"
+    "default_title": "CodeFocus"
   },
   "background": {
     "service_worker": "background.js",

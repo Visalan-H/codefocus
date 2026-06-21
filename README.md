@@ -2,6 +2,12 @@
 
 A Chrome extension that turns any Codeforces problem page into a proper coding environment. Instead of switching tabs to test your code, you get a split view - problem statement on the left, editor and runner on the right, without ever leaving the page.
 
+<p align="center">
+  <a href="https://github.com/Visalan-H/codefocus/archive/refs/heads/main.zip">
+    <img src="https://img.shields.io/badge/-⬇%20Download%20CodeFocus-000000?style=for-the-badge&logoColor=white&logo=googlechrome" alt="Download CodeFocus" />
+  </a>
+</p>
+
 ---
 
 ## What it does
@@ -26,12 +32,12 @@ Code execution is powered by [onlinecompiler.io](https://onlinecompiler.io). You
 2. Go to **API Keys** (not Widgets — that's a different key type)
 3. Create a key and copy it
 
-**Step 2 — Add your key to the extension**
+**Step 2 — Add your key**
 
-Create `src/api-key.js` (it's gitignored, so it won't exist after a fresh clone):
+Open `src/api-key.js` and paste your key:
 
 ```js
-export const API_KEY = 'your_key_here';
+export const API_KEY = '';
 ```
 
 **Step 3 — Load the extension in Chrome**
@@ -61,7 +67,7 @@ To add more, extend the `LANGUAGES` object in `src/config.js`. Compiler IDs come
 ## Known limitations
 
 - **Problemset, contest, and gym** — matches `/problemset/problem/...`, `/contest/.../problem/...`, and `/gym/.../problem/...` URLs.
-- **Custom test cases** — add your own via the + button in the Testcase tab. Up to 10 custom cases per session; custom cases don't require an expected output.
+- **Custom test cases** — add your own via the + button in the Testcase tab. One custom case at a time; custom cases don't require an expected output.
 - **String diff** — pass/fail is decided by comparing trimmed lines. Special-judge or interactive problems will misfire.
 - **Rate limit** — samples run sequentially with an 800 ms pause between them to stay within onlinecompiler.io's rate limits. A large number of samples will be slow.
 - **Submit needs a logged-in session** — the Submit button drives CF's own form, so you need to be logged in to CF for it to actually go through.
@@ -122,7 +128,7 @@ Five keys are written to `chrome.storage.local`:
 |---|---|---|
 | `cfr_enabled` | boolean | Whether the split view is on or off |
 | `cfr_lang` | string | Last selected language (`cpp`, `java`, `python`) |
-| `cfr_submit` | string | Last submitted code (used to pre-fill the editor on re-open) |
+| `cfr_submit` | object | Code + language + problem context, read by the submit page to auto-fill CF’s submission form |
 | `cfr_split_w` | number | Left panel width as a percentage (saved on splitter drag-end) |
 | `cfr_console_h` | number | Console panel height in px (saved on console resizer drag-end) |
 
@@ -131,7 +137,3 @@ Five keys are written to `chrome.storage.local`:
 ### Monaco worker filename is hash-pinned
 
 `content.js` hardcodes `vs/assets/editor.worker-Be8ye1pW.js`. This hash is baked into the Monaco 0.55.1 build. If you ever update `vs/` (e.g. by running `npm install monaco-editor` and re-copying `min/vs`), find the new `editor.worker-*.js` under `vs/assets/` and update the path in `content.js`.
-
-### Submit form selectors are best-effort
-
-The Submit button looks for `form[name="submitForm"], form#formSubmit, form[action*="submit"]` and fills in `textarea[name="source"]` and `select[name="programTypeId"]`. These selectors were written without a verified logged-in session. If CF changes their form markup, open DevTools on a problem page, inspect the actual form, and update `wireSubmit()` in `src/submit.js`. If the form can't be found, the button shows a toast and does nothing — you can always submit manually.
