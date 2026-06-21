@@ -1,4 +1,4 @@
-import { escapeHtml } from './utils.js';
+import { escapeHtml, showToast } from './utils.js';
 
 let cases      = [];
 let activeCase = 0;
@@ -115,7 +115,10 @@ function renderDetail() {
 }
 
 function addCase() {
-  if (cases.filter(c => c.custom).length >= 1) return;
+  if (cases.filter(c => c.custom).length >= 1) {
+    showToast('Only one custom test case is supported at a time.');
+    return;
+  }
   cases.push({ input: '', expected: undefined, custom: true, status: 'idle', actual: undefined });
   activeCase = cases.length - 1;
   renderPills();

@@ -27,18 +27,21 @@ function renderOnBody(onCF, lang) {
     return;
   }
 
-  const rows = [
-    { label: 'Language',    value: `<span class="row-val">${LANG_LABELS[lang] ?? 'C++17'}</span>` },
-    { label: 'Run samples', value: `<div class="keys"><kbd>Ctrl</kbd><kbd>'</kbd></div>` },
-    { label: 'Submit',      value: `<div class="keys"><kbd>Ctrl</kbd><kbd>Enter</kbd></div>` },
-  ];
-
-  rows.forEach(({ label, value }) => {
-    const row = document.createElement('div');
-    row.className = 'row';
-    row.innerHTML = `<span class="row-label">${label}</span>${value}`;
-    onBody.appendChild(row);
-  });
+  onBody.innerHTML = `
+    <div class="info-row">
+      <span class="info-k">Language</span>
+      <span class="info-v">${LANG_LABELS[lang] ?? 'C++17'}</span>
+    </div>
+    <div class="sc-block">
+      <div class="sc-row">
+        <span class="sc-name">Run samples</span>
+        <div class="keys"><kbd>Ctrl</kbd><kbd>'</kbd></div>
+      </div>
+      <div class="sc-row">
+        <span class="sc-name">Submit</span>
+        <div class="keys"><kbd>Ctrl</kbd><kbd>Enter</kbd></div>
+      </div>
+    </div>`;
 }
 
 function applyState(enabled, onCF, lang) {

@@ -20,7 +20,7 @@ export async function buildLayout(statementEl, samples) {
     <div id="cfr-splitter"><span></span><span></span><span></span></div>
     <div id="cfr-right">
       <div id="cfr-toolbar">
-        <span id="cfr-brand">Code Focus</span>
+        <span id="cfr-brand">CodeFocus</span>
         <div id="cfr-toolbar-spacer"></div>
         <select id="cfr-lang">${buildLangOptions(initialKey)}</select>
         <button id="cfr-run"    type="button">${ICON_RUN}<span class="cfr-btn-label">Run</span></button>
@@ -46,6 +46,22 @@ export async function buildLayout(statementEl, samples) {
   wrapper.querySelector('#cfr-left').appendChild(statementEl);
   wrapper.querySelector('#cfr-left .sample-tests')?.remove();
   document.body.prepend(wrapper);
+
+  const [savedSplitW, savedConsoleH] = await Promise.all([
+    storageGet(STORAGE_KEYS.SPLIT_W),
+    storageGet(STORAGE_KEYS.CONSOLE_H),
+  ]);
+
+  if (savedSplitW != null) {
+    const left  = wrapper.querySelector('#cfr-left');
+    const right = wrapper.querySelector('#cfr-right');
+    left.style.width  = savedSplitW + '%';
+    right.style.width = (100 - savedSplitW) + '%';
+  }
+
+  if (savedConsoleH != null) {
+    wrapper.querySelector('#cfr-console').style.height = savedConsoleH + 'px';
+  }
 
   requestAnimationFrame(() => requestAnimationFrame(() => wrapper.classList.add('cfr-in')));
 

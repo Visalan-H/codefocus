@@ -1,3 +1,6 @@
+import { STORAGE_KEYS } from './config.js';
+import { storageSet }   from './storage.js';
+
 export function wireSplitter() {
   const wrapper  = document.getElementById('cfr-wrapper');
   const splitter = document.getElementById('cfr-splitter');
@@ -24,6 +27,8 @@ export function wireSplitter() {
     dragging = false;
     document.body.style.cursor = '';
     splitter.classList.remove('cfr-dragging');
+    const pct = parseFloat(left.style.width);
+    if (!isNaN(pct)) storageSet(STORAGE_KEYS.SPLIT_W, pct);
   });
 }
 
@@ -54,5 +59,7 @@ export function wireConsoleResizer() {
     dragging = false;
     document.body.style.cursor = '';
     resizer.classList.remove('cfr-dragging');
+    const h = parseFloat(panel.style.height);
+    if (!isNaN(h)) storageSet(STORAGE_KEYS.CONSOLE_H, h);
   });
 }

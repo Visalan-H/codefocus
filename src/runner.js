@@ -68,7 +68,7 @@ export function wireRun() {
     try {
       for (let i = 0; i < cases.length; i++) {
         await runCase(i, cases[i], code, lang);
-        if (i < cases.length - 1) await new Promise(r => setTimeout(r, 800));
+        if (i < cases.length - 1) await new Promise(r => setTimeout(r, 800)); // brief pause to avoid hitting onlinecompiler.io rate limits
       }
     } catch (err) {
       showToast('Run failed: ' + err.message, 'error');

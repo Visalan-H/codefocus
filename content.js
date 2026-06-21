@@ -103,9 +103,11 @@ function handlePageMessage(event) {
 }
 
 function wireShortcuts() {
-  window.addEventListener('keydown', e => {
-    if (!e.ctrlKey) return;
-    if (e.key === "'")     { e.preventDefault(); e.stopPropagation(); document.getElementById('cfr-run')?.click(); }
-    if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); document.getElementById('cfr-submit')?.click(); }
-  }, true);
+  window.addEventListener('keydown', onKeydown, true);
+}
+
+function onKeydown(e) {
+  if (!e.ctrlKey) return;
+  if (e.key === "'")     { e.preventDefault(); e.stopPropagation(); document.getElementById('cfr-run')?.click(); }
+  if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); document.getElementById('cfr-submit')?.click(); }
 }

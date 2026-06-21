@@ -2,6 +2,11 @@ import { EDITOR_ID } from './config.js';
 
 export let isEditorReady = false;
 
+// NOTE: pendingValueResolve is a single slot — concurrent getValue() calls would race (the
+// second call overwrites the first resolve, leaving the first caller hanging forever).
+// In practice this is safe because all callers await getValue() before continuing,
+// but if you ever add parallel getValue() usage, replace this with a pending Map keyed
+// by requestId (see storage.js for the pattern).
 let resolveReady;
 let pendingValueResolve = null;
 

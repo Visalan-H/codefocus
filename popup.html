@@ -7,19 +7,21 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #1a1a1a;
-  --surface:  #242424;
-  --line:     #303030;
-  --text:     #e0e0e0;
-  --dim:      #686868;
+  --bg:       #161616;
+  --surface:  #1e1e1e;
+  --surface2: #272727;
+  --line:     #2d2d2d;
+  --text:     #e8e8e8;
+  --dim:      #8a8a8a;
   --accent:   #0078d4;
-  --accent-lo:rgba(0,120,212,0.15);
   --green:    #3dd68c;
   --green-lo: rgba(61,214,140,0.12);
+  --red:      #e06c75;
   --mono:     ui-monospace,"JetBrains Mono","SF Mono",Consolas,monospace;
   --sans:     -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --ease:     cubic-bezier(0.4,0,0.2,1);
-  --dur:      320ms;
+  --dur:      280ms;
+  --r:        5px;
 }
 
 html, body {
@@ -72,34 +74,33 @@ html, body {
   pointer-events: all;
 }
 
-/* ── shared topbar ──────────────────────────────────────────── */
+/* ── topbar ─────────────────────────────── */
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 18px 13px;
+  padding: 11px 14px;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
 }
 
 .wordmark {
-  font-family: var(--mono);
-  font-size: 11.5px;
+  font-family: var(--sans);
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
   color: var(--text);
 }
 
-/* pip — used in ON panel only */
+/* pip — green dot in ON panel */
 .pip {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--green);
   box-shadow: 0 0 0 3px var(--green-lo);
-  animation: pip-pulse 2.8s ease-in-out infinite;
+  animation: pip-pulse 3s ease-in-out infinite;
 }
 
 @keyframes pip-pulse {
@@ -107,13 +108,14 @@ html, body {
   50%      { box-shadow: 0 0 0 5px transparent; }
 }
 
-
-
-#panel-off .topbar-right {
-  width: 8px; height: 8px;
+.topbar-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--line);
 }
+
+/* ── OFF panel ─────────────────────────────── */
 
 .off-hero {
   flex: 1;
@@ -121,15 +123,15 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 22px;
-  padding: 32px 28px;
+  gap: 16px;
+  padding: 22px 24px 26px;
 }
 
 /* power button */
 .power-btn {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
@@ -141,16 +143,16 @@ html, body {
 .power-btn::after {
   content: '';
   position: absolute;
-  inset: -6px;
+  inset: -5px;
   border-radius: 50%;
   border: 1.5px solid var(--line);
   pointer-events: none;
   transition: border-color 0.15s;
 }
 
-.power-btn:hover         { background: #2c2c2c; }
+.power-btn:hover         { background: var(--surface2); }
 .power-btn:hover::after  { border-color: #444; }
-.power-btn:active        { transform: scale(0.92); }
+.power-btn:active        { transform: scale(0.93); }
 
 .power-btn svg {
   position: absolute;
@@ -158,101 +160,104 @@ html, body {
   margin: auto;
 }
 
-.off-label {
-  text-align: center;
-}
+.off-label { text-align: center; }
 
 .off-title {
   font-size: 15px;
   font-weight: 600;
   color: var(--text);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .off-sub {
-  font-size: 11.5px;
+  font-size: 13px;
   color: var(--dim);
   margin-top: 5px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-.on-status {
+/* ── topbar right slot ──────────────────── */
+
+.topbar-end {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 13px 18px;
-  border-bottom: 1px solid var(--line);
-  flex-shrink: 0;
-}
-
-.on-status-text {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--green);
-  flex: 1;
+  gap: 10px;
 }
 
 .btn-off {
-  font-size: 11px;
+  font-size: 12px;
   font-family: var(--sans);
   color: var(--dim);
   background: none;
   border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 3px 10px;
+  border-radius: var(--r);
+  padding: 4px 10px;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
+  line-height: 1.3;
 }
 
-.btn-off:hover { color: #e06c75; border-color: #e06c75; }
+.btn-off:hover { color: var(--red); border-color: var(--red); }
 
-/* rows */
-.rows { display: flex; flex-direction: column; flex: 1; }
+/* ── ON body rows ───────────────────────── */
 
-.row {
+/* language row */
+.info-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 13px 18px;
+  padding: 8px 14px;
   border-bottom: 1px solid var(--line);
-  font-size: 12.5px;
 }
 
-.row:last-child { border-bottom: none; }
+.info-k {
+  font-size: 13px;
+  color: var(--dim);
+}
 
-.row-label { color: var(--dim); }
-
-.row-val {
+.info-v {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 13px;
   color: var(--text);
   font-weight: 500;
+}
+
+/* shortcut rows */
+.sc-block {
+  padding: 4px 14px 8px;
+}
+
+.sc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.sc-name {
+  font-size: 13px;
+  color: var(--dim);
 }
 
 .keys { display: flex; gap: 3px; align-items: center; }
 
 kbd {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-bottom-width: 2px;
+  background: var(--surface2);
+  border: 1px solid #3a3a3a;
+  border-bottom: 2px solid #3a3a3a;
   border-radius: 4px;
-  padding: 2px 7px;
-  line-height: 1.4;
+  padding: 3px 7px;
+  line-height: 1.3;
 }
 
-/* not-on-CF state inside ON panel */
+/* not on CF */
 .not-cf {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 22px;
-  font-size: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
   color: var(--dim);
-  text-align: center;
   line-height: 1.6;
 }
 </style>
@@ -264,19 +269,19 @@ kbd {
   <!-- OFF -->
   <div class="panel" id="panel-off">
     <div class="topbar">
-      <div class="wordmark">Code Focus</div>
-      <div class="topbar-right"></div>
+      <span class="wordmark">CodeFocus</span>
+      <div class="topbar-dot"></div>
     </div>
     <div class="off-hero">
-      <button class="power-btn" id="btn-enable" aria-label="Enable CF-Runner">
-        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-          <path d="M10 8.5A9 9 0 1 0 20 8.5" stroke="#686868" stroke-width="2.2" stroke-linecap="round"/>
-          <line x1="15" y1="4" x2="15" y2="15" stroke="#686868" stroke-width="2.2" stroke-linecap="round"/>
+      <button class="power-btn" id="btn-enable" aria-label="Enable CodeFocus">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M9.5 8A8.5 8.5 0 1 0 18.5 8" stroke="#5a5a5a" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="3.5" x2="14" y2="14" stroke="#5a5a5a" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
       <div class="off-label">
         <div class="off-title">Split view is off</div>
-        <div class="off-sub">Press to enable the editor<br>alongside any CF problem</div>
+        <div class="off-sub">Enable the editor alongside<br>any Codeforces problem</div>
       </div>
     </div>
   </div>
@@ -284,19 +289,17 @@ kbd {
   <!-- ON -->
   <div class="panel" id="panel-on">
     <div class="topbar">
-      <div class="wordmark">Code Focus</div>
-      <div class="pip"></div>
+      <span class="wordmark">CodeFocus</span>
+      <div class="topbar-end">
+        <button class="btn-off" id="btn-disable">Turn off</button>
+        <div class="pip"></div>
+      </div>
     </div>
-    <div class="on-status">
-      <div class="on-status-text">Active</div>
-      <button class="btn-off" id="btn-disable">Turn off</button>
-    </div>
-    <div id="on-body" class="rows"></div>
+    <div id="on-body"></div>
   </div>
 
 </div>
 
 <script src="popup.js"></script>
 </body>
-</html>
 </html>

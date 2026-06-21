@@ -1,16 +1,16 @@
-# Code Focus
+# CodeFocus
 
-A Chrome extension that turns any Codeforces problem page into a proper coding environment. Instead of switching tabs to test your code, you get a split view — problem statement on the left, editor and runner on the right — without ever leaving the page.
+A Chrome extension that turns any Codeforces problem page into a proper coding environment. Instead of switching tabs to test your code, you get a split view - problem statement on the left, editor and runner on the right, without ever leaving the page.
 
 ---
 
 ## What it does
 
-- **Split layout** — the problem statement and your editor sit side by side. Drag the divider to resize either panel.
+- **Split layout** — the problem statement and your editor sit side by side. Drag the divider to resize either panel. Your preferred split ratio and console height are saved and restored automatically.
 - **Real code editor** — Monaco (the same editor that powers VS Code) with syntax highlighting, auto-brackets, and a dark theme.
 - **Run against samples** — hit Run (or `Ctrl+'`) and your code is executed against every public sample on the page. Each one gets a ✓ or ✗, and failures show an expected-vs-got diff inline.
 - **Submit without leaving** — the Submit button (or `Ctrl+Enter`) fills in Codeforces' own submit form and fires it. No copy-pasting.
-- **Remembers your language** — whichever language you picked last is restored the next time you open a problem.
+- **Remembers your preferences** — language, split ratio, and console height are all persisted across sessions via `chrome.storage.local`.
 
 ---
 
@@ -61,8 +61,9 @@ To add more, extend the `LANGUAGES` object in `src/config.js`. Compiler IDs come
 ## Known limitations
 
 - **Problemset, contest, and gym** — matches `/problemset/problem/...`, `/contest/.../problem/...`, and `/gym/.../problem/...` URLs.
-- **Custom test cases** — add your own via the + button in the Testcase tab. Custom cases don't require an expected output.
+- **Custom test cases** — add your own via the + button in the Testcase tab. Up to 10 custom cases per session; custom cases don't require an expected output.
 - **String diff** — pass/fail is decided by comparing trimmed lines. Special-judge or interactive problems will misfire.
+- **Rate limit** — samples run sequentially with an 800 ms pause between them to stay within onlinecompiler.io's rate limits. A large number of samples will be slow.
 - **Submit needs a logged-in session** — the Submit button drives CF's own form, so you need to be logged in to CF for it to actually go through.
 
 ---
@@ -113,9 +114,19 @@ runner.js
   →  renders pass / fail
 ```
 
-### Language preference storage
+### Persisted preferences
 
-`chrome.storage.local` is also only accessible from the isolated world, so it follows the same pattern — page world postMessages a get/set request, `content.js` does the actual `chrome.storage` call and postMessages the result back. The preference is loaded in `buildLayout()` before the DOM is built, so the `<select>` starts on the right value and the editor mounts with the correct language and template on the first render.
+Five keys are written to `chrome.storage.local`:
+
+| Key | Type | What it stores |
+|---|---|---|
+| `cfr_enabled` | boolean | Whether the split view is on or off |
+| `cfr_lang` | string | Last selected language (`cpp`, `java`, `python`) |
+| `cfr_submit` | string | Last submitted code (used to pre-fill the editor on re-open) |
+| `cfr_split_w` | number | Left panel width as a percentage (saved on splitter drag-end) |
+| `cfr_console_h` | number | Console panel height in px (saved on console resizer drag-end) |
+
+`chrome.storage.local` is only accessible from the isolated world, so reads and writes follow the same postMessage bridge used for everything else — the page world sends a `cfr:storage-get` or `cfr:storage-set` request, `content.js` does the actual storage call, and postMessages the result back. All five keys are read in `buildLayout()` before the DOM is constructed, so the editor, split ratio, and console height are all correct on the first render with no visible reflow.
 
 ### Monaco worker filename is hash-pinned
 

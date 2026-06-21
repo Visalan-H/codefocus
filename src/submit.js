@@ -11,7 +11,9 @@ function parseSubmitDest() {
 
   const contestId    = m[1] || m[2] || m[3];
   const problemIndex = m[4];
-  const url          = contestId ? `/contest/${contestId}/submit` : '/problemset/submit';
+  // contestId is always defined when the regex matches (m[1] for problemset, m[2] for contest, m[3] for gym).
+  // CF accepts /contest/CONTESTID/submit for all problem types, so we always route there.
+  const url = `/contest/${contestId}/submit`;
 
   return { url, contestId, problemIndex };
 }
@@ -30,17 +32,24 @@ export function wireSubmit() {
     btn.classList.add('cfr-busy');
     label.textContent = 'Opening';
 
-    const code = await getValue();
-    const lang = LANGUAGES[document.getElementById('cfr-lang').value];
+    try {
+      const code = await getValue();
+      const lang = LANGUAGES[document.getElementById('cfr-lang').value];
 
-    await storageSet(STORAGE_KEYS.SUBMIT, {
-      code,
-      cfId:         lang.cfId,
-      contestId:    dest.contestId,
-      problemIndex: dest.problemIndex,
-      timestamp:    Date.now(),
-    });
+      await storageSet(STORAGE_KEYS.SUBMIT, {
+        code,
+        cfId:         lang.cfId,
+        contestId:    dest.contestId,
+        problemIndex: dest.problemIndex,
+        timestamp:    Date.now(),
+      });
 
-    window.location.href = dest.url;
+      window.location.href = dest.url;
+    } catch (err) {
+      showToast('Submit failed: ' + err.message, 'error');
+      btn.disabled = false;
+      btn.classList.remove('cfr-busy');
+      label.textContent = 'Submit';
+    }
   });
 }

@@ -25,7 +25,9 @@ export const LANGUAGES = {
 };
 
 export const STORAGE_KEYS = {
-  ENABLED: 'cfr_enabled',
-  LANG:    'cfr_lang',
-  SUBMIT:  'cfr_submit',
+  ENABLED:   'cfr_enabled',
+  LANG:      'cfr_lang',
+  SUBMIT:    'cfr_submit',
+  SPLIT_W:   'cfr_split_w',   // left panel width as a percentage (number)
+  CONSOLE_H: 'cfr_console_h', // console panel height in px (number)
 };
