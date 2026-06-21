@@ -10,7 +10,7 @@ A Chrome extension that turns any Codeforces problem page into a proper coding e
 - **Real code editor** — Monaco (the same editor that powers VS Code) with syntax highlighting, auto-brackets, and a dark theme.
 - **Run against samples** — hit Run (or `Ctrl+'`) and your code is executed against every public sample on the page. Each one gets a ✓ or ✗, and failures show an expected-vs-got diff inline.
 - **Submit without leaving** — the Submit button (or `Ctrl+Enter`) fills in Codeforces' own submit form and fires it. No copy-pasting.
-- **Remembers your language** — whichever language you picked last (C++17, Python3, or Java) is restored the next time you open a problem.
+- **Remembers your language** — whichever language you picked last is restored the next time you open a problem.
 
 ---
 
@@ -51,8 +51,8 @@ export const API_KEY = 'your_key_here';
 | Language | Compiler used | CF submission ID |
 |----------|--------------|-----------------|
 | C++17 | `g++-15` | `54` |
-| Python 3 | `python-3.14` | `31` |
 | Java | `openjdk-25` | `60` |
+| Python 3 | `python-3.14` | `31` |
 
 To add more, extend the `LANGUAGES` object in `src/config.js`. Compiler IDs come from [onlinecompiler.io/docs#compilers](https://onlinecompiler.io/docs#compilers). CF submission IDs come from the `value` attributes on the language `<select>` in CF's submit form.
 
@@ -69,11 +69,11 @@ To add more, extend the `LANGUAGES` object in `src/config.js`. Compiler IDs come
 
 ## Tech decisions and implementation notes
 
-### Why Monaco is bundled locally (~16 MB)
+### Why Monaco is bundled locally (~4.4 MB)
 
 Monaco is bundled in the `vs/` folder rather than loaded from a CDN. Codeforces runs a strict Content Security Policy that blocks external scripts — any `<script src="https://cdn.jsdelivr.net/...">` would be rejected. The extension's own origin (`chrome-extension://...`) is automatically allowlisted by Chrome, so local files always load cleanly regardless of the page's CSP.
 
-The `vs/` folder is large because Monaco ships syntax support for dozens of languages. Trimming it down to just C++/Python/Java is a stretch goal.
+The `vs/` folder is trimmed to only what's needed for the supported languages. Unused workers (`ts.worker`, `css.worker`, `html.worker`, `json.worker`), ~80 unused language grammars, all non-English NLS files, and unused language servers have been stripped from the original Monaco distribution.
 
 ### Why content.js injects a `<script>` tag instead of running Monaco directly
 

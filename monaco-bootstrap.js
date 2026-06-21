@@ -33,6 +33,8 @@
         minimap:              { enabled: false },
         automaticLayout:      true,
         scrollBeyondLastLine: false,
+        wordWrap:             'on',
+        wrappingIndent:       'same',
         padding:              { top: 12 },
       });
       post({ type: 'cfr:mounted' });
