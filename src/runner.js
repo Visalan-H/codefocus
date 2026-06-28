@@ -38,9 +38,16 @@ async function runCase(index, testCase, code, lang) {
     if (!hasExpected)                                          verdict = 'done';
     else if (normalize(got) === normalize(testCase.expected)) verdict = 'pass';
     else                                                       verdict = 'fail';
-    setCaseStatus(index, verdict, got);
+    setCaseStatus(index, verdict, got, false);
   } else {
-    setCaseStatus(index, 'fail', (error || output || `Error (exit ${exit_code})`).trim());
+    const errText = (error || output || `Exit code ${exit_code}`).trim();
+    let label;
+    if (status === 'compilation_error')        label = 'Compilation Error';
+    else if (status === 'time_limit_exceeded') label = 'Time Limit Exceeded';
+    else if (status === 'memory_limit_exceeded') label = 'Memory Limit Exceeded';
+    else if (status === 'error')               label = 'Execution Error';
+    else                                       label = 'Runtime Error';
+    setCaseStatus(index, 'fail', errText, true, label);
   }
 }
 

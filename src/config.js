@@ -30,4 +30,7 @@ export const STORAGE_KEYS = {
   SUBMIT:    'cfr_submit',
   SPLIT_W:   'cfr_split_w',   // left panel width as a percentage (number)
   CONSOLE_H: 'cfr_console_h', // console panel height in px (number)
+  SKETCH_H:  'cfr_sketch_h',  // sketch panel height in px (number)
+  CODE:      'cfr_code',      // prefix: cfr_code_<problemId>_<langKey>
+  API_KEY:   'cfr_api_key',   // onlinecompiler.io API key, set via the popup
 };

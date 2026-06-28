@@ -51,6 +51,12 @@
     if (data.type === 'cfr:set-value' && editor) {
       editor.setValue(data.value || '');
     }
+
+    if (data.type === 'cfr:watch-changes' && editor) {
+      editor.onDidChangeModelContent(() => {
+        post({ type: 'cfr:changed', value: editor.getValue() });
+      });
+    }
   }
 
   function boot() {

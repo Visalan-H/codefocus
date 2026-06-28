@@ -9,6 +9,7 @@ export let isEditorReady = false;
 // by requestId (see storage.js for the pattern).
 let resolveReady;
 let pendingValueResolve = null;
+const changeListeners = [];
 
 export const monacoReady = new Promise(resolve => { resolveReady = resolve; });
 
@@ -22,6 +23,10 @@ window.addEventListener('message', ({ origin, data }) => {
   if (data.type === 'cfr:ready')   resolveReady();
   if (data.type === 'cfr:mounted') isEditorReady = true;
 
+  if (data.type === 'cfr:changed') {
+    changeListeners.forEach(fn => fn(data.value));
+  }
+
   if (data.type === 'cfr:value' && pendingValueResolve) {
     pendingValueResolve(data.value);
     pendingValueResolve = null;
@@ -31,6 +36,8 @@ window.addEventListener('message', ({ origin, data }) => {
 export const mountEditor  = (language, value) => post({ type: 'cfr:mount',        containerId: EDITOR_ID, language, value });
 export const setLanguage  = (language)        => post({ type: 'cfr:set-language', containerId: EDITOR_ID, language });
 export const setValue     = (value)           => post({ type: 'cfr:set-value',    containerId: EDITOR_ID, value });
+export const watchChanges = ()                => post({ type: 'cfr:watch-changes', containerId: EDITOR_ID });
+export const onEditorChange = (fn)            => { changeListeners.push(fn); };
 
 export function getValue() {
   return new Promise(resolve => {

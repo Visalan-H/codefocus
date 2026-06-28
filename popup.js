@@ -1,5 +1,6 @@
 const KEY_ENABLED = 'cfr_enabled';
 const KEY_LANG    = 'cfr_lang';
+const KEY_API_KEY = 'cfr_api_key';
 
 const LANG_LABELS = { cpp: 'C++17', python: 'Python 3', java: 'Java' };
 
@@ -79,4 +80,31 @@ chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
     currentLang    = result[KEY_LANG] || 'cpp';
     applyState(currentEnabled, currentOnCF, currentLang);
   });
+});
+
+// ── API key ──────────────────────────────────────────────
+
+const keyInput  = document.getElementById('key-input');
+const keySave   = document.getElementById('key-save');
+const keyStatus = document.getElementById('key-status');
+
+function flashStatus(text, isError) {
+  keyStatus.textContent = text;
+  keyStatus.classList.toggle('error', !!isError);
+  keyStatus.classList.add('show');
+  setTimeout(() => keyStatus.classList.remove('show'), 1800);
+}
+
+chrome.storage.local.get(KEY_API_KEY, result => {
+  if (result[KEY_API_KEY]) keyInput.value = result[KEY_API_KEY];
+});
+
+keySave.addEventListener('click', () => {
+  const value = keyInput.value.trim();
+  if (!value) { flashStatus('Enter a key first', true); return; }
+  chrome.storage.local.set({ [KEY_API_KEY]: value }, () => flashStatus('✓ Saved'));
+});
+
+keyInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') keySave.click();
 });

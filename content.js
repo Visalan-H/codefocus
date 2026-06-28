@@ -29,7 +29,7 @@ async function initRunner() {
   try {
     const [
       { buildLayout, initEditor },
-      { wireSplitter, wireConsoleResizer },
+      { wireSplitter, wireConsoleResizer, wireSketchResizer },
       { wireRun },
       { wireSubmit },
       { waitFor, scrapeSamples },
@@ -47,6 +47,7 @@ async function initRunner() {
     await buildLayout(statementEl, samples);
     wireSplitter();
     wireConsoleResizer();
+    wireSketchResizer();
     wireRun();
     wireSubmit();
     await initEditor();

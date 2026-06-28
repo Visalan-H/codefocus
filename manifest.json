@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CodeFocus",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Turns Codeforces problem pages into a split view: run public samples instantly, submit without leaving the page.",
   "permissions": ["storage", "tabs"],
   "host_permissions": [
@@ -39,7 +39,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["vs/*", "monaco-bootstrap.js", "src/*.js"],
+      "resources": ["vs/*", "lib/*", "monaco-bootstrap.js", "src/*.js"],
       "matches": ["https://codeforces.com/*"]
     }
   ]

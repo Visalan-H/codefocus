@@ -1,4 +1,4 @@
-import { API_KEY } from './src/api-key.js';
+import { STORAGE_KEYS } from './src/config.js';
 
 const OC_ENDPOINT = 'https://api.onlinecompiler.io/api/run-code-sync/';
 
@@ -7,9 +7,17 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
   (async () => {
     try {
+      const stored = await chrome.storage.local.get(STORAGE_KEYS.API_KEY);
+      const apiKey = stored[STORAGE_KEYS.API_KEY];
+
+      if (!apiKey) {
+        sendResponse({ ok: false, error: 'No API key set — open the CodeFocus popup and add your onlinecompiler.io key.' });
+        return;
+      }
+
       const res = await fetch(OC_ENDPOINT, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': API_KEY },
+        headers: { 'Content-Type': 'application/json', 'Authorization': apiKey },
         body:    JSON.stringify({ compiler: msg.compiler, code: msg.code, input: msg.input }),
       });
 

@@ -26,10 +26,12 @@ export function resetAllStatuses() {
   renderResultPane();
 }
 
-export function setCaseStatus(index, status, actual) {
+export function setCaseStatus(index, status, actual, isError = false, errorLabel = 'Error') {
   const c = cases[index];
   if (!c) return;
-  c.status = status;
+  c.status     = status;
+  c.isError    = isError;
+  c.errorLabel = errorLabel;
   if (actual !== undefined) c.actual = actual;
   renderPills();
   renderResultPane();
@@ -143,28 +145,33 @@ function computeVerdict() {
   return null;
 }
 
-function diffLines(expected, actual) {
-  const a      = (expected || '').split('\n');
-  const b      = (actual   || '').split('\n');
-  const result = [];
-  const len    = Math.max(a.length, b.length);
+function renderSideBySideDiff(expected, actual) {
+  const a   = (expected || '').trimEnd().split('\n');
+  const b   = (actual   || '').trimEnd().split('\n');
+  const len = Math.max(a.length, b.length);
+
+  let leftLines  = '';
+  let rightLines = '';
 
   for (let i = 0; i < len; i++) {
-    if      (i >= a.length) result.push({ type: 'add',    value: b[i] });
-    else if (i >= b.length) result.push({ type: 'remove', value: a[i] });
-    else if (a[i] !== b[i]) { result.push({ type: 'remove', value: a[i] }); result.push({ type: 'add', value: b[i] }); }
-    else                    result.push({ type: 'equal',  value: a[i] });
+    const exp = i < a.length ? a[i] : '';
+    const got = i < b.length ? b[i] : '';
+    const cls = exp === got ? ' cfr-diff-side-match' : ' cfr-diff-side-mismatch';
+    leftLines  += `<div class="cfr-diff-side-line${cls}">${escapeHtml(exp)}</div>`;
+    rightLines += `<div class="cfr-diff-side-line${cls}">${escapeHtml(got)}</div>`;
   }
 
-  return result;
-}
-
-function renderDiff(expected, actual) {
-  return diffLines(expected, actual).map(({ type, value }) => {
-    if (type === 'equal')  return `<div class="cfr-diff-line">${escapeHtml(value)}</div>`;
-    if (type === 'remove') return `<div class="cfr-diff-line cfr-diff-remove"><span class="cfr-diff-sign">\u2212</span>${escapeHtml(value)}</div>`;
-    if (type === 'add')    return `<div class="cfr-diff-line cfr-diff-add"><span class="cfr-diff-sign">+</span>${escapeHtml(value)}</div>`;
-  }).join('');
+  return `<div class="cfr-diff-side">
+    <div class="cfr-diff-side-col cfr-diff-side-col-exp">
+      <div class="cfr-diff-side-header cfr-diff-add-label">Expected</div>
+      <div class="cfr-diff-side-body">${leftLines}</div>
+    </div>
+    <div class="cfr-diff-side-divider"></div>
+    <div class="cfr-diff-side-col cfr-diff-side-col-got">
+      <div class="cfr-diff-side-header cfr-diff-remove-label">Got</div>
+      <div class="cfr-diff-side-body">${rightLines}</div>
+    </div>
+  </div>`;
 }
 
 function renderResultDetail(c) {
@@ -177,24 +184,35 @@ function renderResultDetail(c) {
       <pre class="cfr-result-box">${escapeHtml(c.input)}</pre>
     </div>`;
 
-  if (c.status === 'fail' && c.expected?.trim()) {
+  // Compiler/runtime error — show a dedicated error block, skip diff
+  if (c.isError) {
     return inputBlock + `
       <div class="cfr-result-field">
-        <div class="cfr-case-label">Diff &mdash; <span class="cfr-diff-remove-label">expected</span> / <span class="cfr-diff-add-label">got</span></div>
-        <div class="cfr-diff-box">${renderDiff(c.expected, c.actual || '')}</div>
+        <div class="cfr-case-label cfr-label-error">${escapeHtml(c.errorLabel)}</div>
+        <pre class="cfr-result-box cfr-result-box-error">${escapeHtml(c.actual || '')}</pre>
       </div>`;
   }
 
-  return inputBlock + `
+  const gotBlock = `
     <div class="cfr-result-field">
       <div class="cfr-case-label">Output</div>
       <pre class="cfr-result-box${c.status === 'fail' ? ' cfr-result-box-fail' : ''}">${escapeHtml(c.actual || '')}</pre>
-    </div>
-    ${c.expected?.trim() ? `
+    </div>`;
+
+  if (c.status === 'fail' && c.expected?.trim()) {
+    return inputBlock + gotBlock + `
+      <div class="cfr-result-field">
+        <div class="cfr-case-label">Diff</div>
+        ${renderSideBySideDiff(c.expected, c.actual || '')}
+      </div>`;
+  }
+
+  return inputBlock + gotBlock +
+    (c.expected?.trim() ? `
     <div class="cfr-result-field">
       <div class="cfr-case-label">Expected</div>
       <pre class="cfr-result-box">${escapeHtml(c.expected)}</pre>
-    </div>` : ''}`;
+    </div>` : '');
 }
 
 function renderResultPane() {

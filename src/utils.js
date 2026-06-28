@@ -32,7 +32,7 @@ export function scrapeSamples() {
 export function normalize(str) {
   return str
     .split('\n')
-    .map(l => l.trim())
+    .map(l => l.trim().toLowerCase())
     .filter(Boolean)
     .join('\n');
 }

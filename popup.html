@@ -25,7 +25,7 @@
 }
 
 html, body {
-  width: 260px;
+  width: 460px;
   background: var(--bg);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
@@ -37,7 +37,7 @@ html, body {
    Sliding the track left/right reveals one panel at a time.   */
 
 .stage {
-  width: 260px;
+  width: 460px;
   display: grid;
   grid-template-areas: 'panel';
   overflow: hidden;
@@ -45,7 +45,7 @@ html, body {
 
 .panel {
   grid-area: panel;
-  width: 260px;
+  width: 460px;
   display: flex;
   flex-direction: column;
   transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
@@ -57,13 +57,13 @@ html, body {
 }
 
 #panel-on {
-  transform: translateX(260px);
+  transform: translateX(460px);
   opacity: 0;
   pointer-events: none;
 }
 
 .stage.show-on #panel-off {
-  transform: translateX(-260px);
+  transform: translateX(-460px);
   opacity: 0;
   pointer-events: none;
 }
@@ -80,14 +80,14 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 11px 14px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
 }
 
 .wordmark {
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text);
@@ -95,8 +95,8 @@ html, body {
 
 /* pip — green dot in ON panel */
 .pip {
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--green);
   box-shadow: 0 0 0 3px var(--green-lo);
@@ -109,8 +109,8 @@ html, body {
 }
 
 .topbar-dot {
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--line);
 }
@@ -123,15 +123,15 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 22px 24px 26px;
+  gap: 22px;
+  padding: 32px 30px 36px;
 }
 
 /* power button */
 .power-btn {
   position: relative;
-  width: 68px;
-  height: 68px;
+  width: 86px;
+  height: 86px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
@@ -163,16 +163,16 @@ html, body {
 .off-label { text-align: center; }
 
 .off-title {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.02em;
 }
 
 .off-sub {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--dim);
-  margin-top: 5px;
+  margin-top: 6px;
   line-height: 1.55;
 }
 
@@ -185,13 +185,13 @@ html, body {
 }
 
 .btn-off {
-  font-size: 12px;
+  font-size: 14px;
   font-family: var(--sans);
   color: var(--dim);
   background: none;
   border: 1px solid var(--line);
   border-radius: var(--r);
-  padding: 4px 10px;
+  padding: 6px 14px;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
   line-height: 1.3;
@@ -206,36 +206,36 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
+  padding: 12px 20px;
   border-bottom: 1px solid var(--line);
 }
 
 .info-k {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--dim);
 }
 
 .info-v {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text);
   font-weight: 500;
 }
 
 /* shortcut rows */
 .sc-block {
-  padding: 4px 14px 8px;
+  padding: 6px 20px 12px;
 }
 
 .sc-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 0;
+  padding: 8px 0;
 }
 
 .sc-name {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--dim);
 }
 
@@ -243,23 +243,100 @@ html, body {
 
 kbd {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 13px;
   color: var(--text);
   background: var(--surface2);
   border: 1px solid #3a3a3a;
   border-bottom: 2px solid #3a3a3a;
   border-radius: 4px;
-  padding: 3px 7px;
+  padding: 4px 10px;
   line-height: 1.3;
 }
 
 /* not on CF */
 .not-cf {
-  padding: 10px 14px;
-  font-size: 13px;
+  padding: 14px 20px;
+  font-size: 15px;
   color: var(--dim);
   line-height: 1.6;
 }
+
+/* ── API key section ───────────────────── */
+
+.key-section {
+  padding: 14px 20px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.key-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.key-label {
+  font-size: 14px;
+  color: var(--dim);
+}
+
+.key-help {
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.key-help:hover { text-decoration: underline; }
+
+.key-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.key-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 8px 10px;
+  outline: none;
+  user-select: text;
+  transition: border-color 0.15s;
+}
+
+.key-input::placeholder { color: #5a5a5a; }
+.key-input:focus { border-color: var(--accent); }
+
+.key-save-btn {
+  font-size: 14px;
+  font-family: var(--sans);
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--r);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.key-save-btn:hover { background: #1184d9; }
+
+.key-status {
+  font-size: 13px;
+  color: var(--green);
+  margin-top: 8px;
+  min-height: 16px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.key-status.show { opacity: 1; }
+.key-status.error { color: var(--red); }
 </style>
 </head>
 <body>
@@ -274,7 +351,7 @@ kbd {
     </div>
     <div class="off-hero">
       <button class="power-btn" id="btn-enable" aria-label="Enable CodeFocus">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <svg width="36" height="36" viewBox="0 0 28 28" fill="none">
           <path d="M9.5 8A8.5 8.5 0 1 0 18.5 8" stroke="#5a5a5a" stroke-width="2" stroke-linecap="round"/>
           <line x1="14" y1="3.5" x2="14" y2="14" stroke="#5a5a5a" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -298,6 +375,18 @@ kbd {
     <div id="on-body"></div>
   </div>
 
+</div>
+
+<div class="key-section">
+  <div class="key-row">
+    <span class="key-label">API Key</span>
+    <a class="key-help" href="https://api.onlinecompiler.io" target="_blank" rel="noopener">Get one free</a>
+  </div>
+  <div class="key-input-row">
+    <input type="text" id="key-input" class="key-input" placeholder="Paste your onlinecompiler.io key" autocomplete="off" spellcheck="false" />
+    <button type="button" id="key-save" class="key-save-btn">Save</button>
+  </div>
+  <div class="key-status" id="key-status"></div>
 </div>
 
 <script src="popup.js"></script>

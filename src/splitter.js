@@ -63,3 +63,36 @@ export function wireConsoleResizer() {
     if (!isNaN(h)) storageSet(STORAGE_KEYS.CONSOLE_H, h);
   });
 }
+
+export function wireSketchResizer() {
+  const left    = document.getElementById('cfr-left');
+  const resizer = document.getElementById('cfr-sketch-resizer');
+  const panel   = document.getElementById('cfr-sketch-panel');
+  let dragging    = false;
+  let startY      = 0;
+  let startHeight = 0;
+
+  resizer.addEventListener('mousedown', e => {
+    dragging    = true;
+    startY      = e.clientY;
+    startHeight = panel.getBoundingClientRect().height;
+    document.body.style.cursor = 'row-resize';
+    resizer.classList.add('cfr-dragging');
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const maxH = left.getBoundingClientRect().height - 160;
+    panel.style.height = Math.min(maxH, Math.max(120, startHeight + (startY - e.clientY))) + 'px';
+    window.dispatchEvent(new Event('resize'));
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.style.cursor = '';
+    resizer.classList.remove('cfr-dragging');
+    const h = parseFloat(panel.style.height);
+    if (!isNaN(h)) storageSet(STORAGE_KEYS.SKETCH_H, h);
+  });
+}
